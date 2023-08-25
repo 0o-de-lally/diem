@@ -23,7 +23,7 @@ jobs:
       #     detached: true
       #   timeout-minutes: 15
 
-      - uses: dtolnay/rust-toolchain@1.66.1
+      - uses: dtolnay/rust-toolchain@1.70.0
         with:
           components: rustfmt
 
