@@ -34,7 +34,9 @@ use move_binary_format::errors::VMResult;
 use std::{path::Path, sync::Arc};
 
 pub struct DiemDebugger {
-    debugger: Arc<dyn DiemValidatorInterface + Send>,
+    ///////// 0L ////////
+    // debugger interface
+    pub debugger: Arc<dyn DiemValidatorInterface + Send>,
 }
 
 impl DiemDebugger {
