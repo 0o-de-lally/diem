@@ -491,7 +491,9 @@ jemallocator = { version = "0.3.2", features = [
     "profiling",
     "unprefixed_malloc_on_supported_platforms",
 ] }
-json-patch = "0.2.6"
+# NOTE: jsonptr is a dependency of json-patch and the versions should be kept consistent
+json-patch = "2.0.0"
+jsonptr = "0.4.7"
 jsonwebtoken = "8.1"
 libfuzzer-sys = "0.4.6"
 libsecp256k1 = "0.7.0"

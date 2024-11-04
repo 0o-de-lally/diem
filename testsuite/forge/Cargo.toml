@@ -44,6 +44,7 @@ hyper = { workspace = true }
 hyper-tls = { workspace = true }
 itertools = { workspace = true }
 json-patch = { workspace = true }
+jsonptr = { workspace = true }
 # WARNING: these kube libraries publish only minor version updates with zero as major version
 # and therefore needs to be manually updated periodically here otherwise it ends up
 # transitively referencing a bunch of old libraries that then conflict with who knows what elsewhere.

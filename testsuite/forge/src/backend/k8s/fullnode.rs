@@ -23,6 +23,7 @@ use k8s_openapi::{
         core::v1::{
             ConfigMap, ConfigMapVolumeSource, Container, PersistentVolumeClaim,
             PersistentVolumeClaimSpec, PodSpec, PodTemplateSpec, ResourceRequirements,
+            VolumeResourceRequirements,
             SecretVolumeSource, Service, ServicePort, ServiceSpec, Volume, VolumeMount,
         },
     },
@@ -111,9 +112,9 @@ fn create_fullnode_persistent_volume_claim(
         },
         spec: Some(PersistentVolumeClaimSpec {
             access_modes: Some(vec!["ReadWriteOnce".to_string()]),
-            resources: Some(ResourceRequirements {
+            resources: Some(VolumeResourceRequirements {
                 requests: volume_requests,
-                ..ResourceRequirements::default()
+                ..VolumeResourceRequirements::default()
             }),
             ..PersistentVolumeClaimSpec::default()
         }),
@@ -203,7 +204,7 @@ fn create_fullnode_volumes(
         Volume {
             name: DIEM_CONFIG_VOLUME_NAME.to_string(),
             config_map: Some(ConfigMapVolumeSource {
-                name: Some(fullnode_node_config_config_map_name),
+                name: fullnode_node_config_config_map_name,
                 ..ConfigMapVolumeSource::default()
             }),
             ..Volume::default()
@@ -517,7 +518,7 @@ mod tests {
             },
             spec: Some(PersistentVolumeClaimSpec {
                 access_modes: Some(vec!["ReadWriteOnce".to_string()]),
-                resources: Some(ResourceRequirements {
+                resources: Some(VolumeResourceRequirements {
                     requests: Some(
                         [
                             ("storage".to_string(), Quantity("1Gi".to_string())),
@@ -527,7 +528,7 @@ mod tests {
                         .cloned()
                         .collect(),
                     ),
-                    ..ResourceRequirements::default()
+                    ..VolumeResourceRequirements::default()
                 }),
                 ..PersistentVolumeClaimSpec::default()
             }),
@@ -648,9 +649,9 @@ mod tests {
             },
             spec: Some(PersistentVolumeClaimSpec {
                 access_modes: Some(vec!["ReadWriteOnce".to_string()]),
-                resources: Some(ResourceRequirements {
+                resources: Some(VolumeResourceRequirements {
                     requests,
-                    ..ResourceRequirements::default()
+                    ..VolumeResourceRequirements::default()
                 }),
                 ..PersistentVolumeClaimSpec::default()
             }),

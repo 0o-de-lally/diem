@@ -6,6 +6,7 @@ use kube::{
     api::{Api, PostParams},
     client::Client as K8sClient,
     Error as KubeError, Resource as ApiResource,
+    core::NamespaceResourceScope as NamespaceResourceScope,
 };
 use serde::{de::DeserializeOwned, Serialize};
 use std::fmt::Debug;
@@ -19,7 +20,7 @@ pub struct K8sApi<K> {
 
 impl<K> K8sApi<K>
 where
-    K: ApiResource,
+    K: ApiResource<Scope = NamespaceResourceScope>,
 {
     pub fn from_client(kube_client: K8sClient, kube_namespace: Option<String>) -> Self
     where
@@ -34,6 +35,26 @@ where
                 api: Api::all(kube_client),
             }
         }
+    }
+}
+
+impl<K> K8sApi<K>
+where
+        K: ApiResource,
+    {
+    // NOTE: I created this alias function because recent versions of the
+    // k8s libraries had introduced a type constraint requiring a namespace-able
+    // return type if a namespace is passed. The function signature for from_client()
+    // really isn't compatible with this constraint (or at least I couldn't see how to make it so)
+    // therefore created this alias function as a workaround for the one place we call with no namespace.
+    pub fn from_client_not_namespaced(kube_client: K8sClient) -> Self
+    where
+        <K as ApiResource>::DynamicType: Default,
+    {
+            K8sApi {
+                api: Api::all(kube_client),
+            }
+
     }
 }
 

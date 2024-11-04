@@ -109,7 +109,7 @@ async fn wait_node_haproxy(
                     format!("{}-{}-haproxy", DIEM_NODE_HELM_RELEASE_NAME, i);
                 match deployments_api.get_status(&haproxy_deployment_name).await {
                     Ok(s) => {
-                        let deployment_name = s.name();
+                        let deployment_name = s.name_unchecked();
                         if let Some(deployment_status) = s.status {
                             let ready_replicas = deployment_status.ready_replicas.unwrap_or(0);
                             info!(
@@ -177,7 +177,7 @@ where
         .await?
     {
         either::Left(list) => {
-            let names: Vec<_> = list.iter().map(ResourceExt::name).collect();
+            let names: Vec<_> = list.iter().map(ResourceExt::name_unchecked).collect();
             info!("Deleting collection of {}: {:?}", name, names);
         },
         either::Right(status) => {
@@ -861,7 +861,7 @@ pub async fn create_management_configmap(
     cleanup_duration: Duration,
 ) -> Result<()> {
     let kube_client = create_k8s_client().await?;
-    let namespaces_api = Arc::new(K8sApi::<Namespace>::from_client(kube_client.clone(), None));
+    let namespaces_api = Arc::new(K8sApi::<Namespace>::from_client_not_namespaced(kube_client.clone()));
     let other_kube_namespace = kube_namespace.clone();
 
     // try to create a new namespace
@@ -943,7 +943,7 @@ pub async fn cleanup_cluster_with_management() -> Result<()> {
         .items
         .into_iter()
         .filter(|pod| {
-            let pod_name = pod.name();
+            let pod_name = pod.name_unchecked();
             info!("Got pod {}", pod_name);
             if let Some(time) = &pod.metadata.creation_timestamp {
                 let pod_creation_time = time.0.timestamp() as u64;
@@ -960,7 +960,7 @@ pub async fn cleanup_cluster_with_management() -> Result<()> {
         })
         .collect::<Vec<Pod>>();
     for pod in pods {
-        let pod_name = pod.name();
+        let pod_name = pod.name_unchecked();
         info!("Deleting pod {}", pod_name);
         pods_api.delete(&pod_name, &DeleteParams::default()).await?;
     }
@@ -975,7 +975,7 @@ pub async fn cleanup_cluster_with_management() -> Result<()> {
         .items
         .into_iter()
         .filter(|configmap| {
-            let configmap_name = configmap.name();
+            let configmap_name = configmap.name_unchecked();
             let configmap_namespace = configmap.namespace().unwrap();
             if !configmap_name.contains(MANAGEMENT_CONFIGMAP_PREFIX) {
                 return false;

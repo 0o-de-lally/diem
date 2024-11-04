@@ -6,6 +6,7 @@ use again::RetryPolicy;
 use anyhow::bail;
 use diem_logger::info;
 use json_patch::{Patch as JsonPatch, PatchOperation, ReplaceOperation};
+use jsonptr::Pointer;
 use k8s_openapi::api::{apps::v1::StatefulSet, core::v1::Pod};
 use kube::{
     api::{Api, Patch, PatchParams},
@@ -92,7 +93,7 @@ async fn check_stateful_set_status(
 ) -> Result<(), WorkloadScalingError> {
     match stateful_set_api.get(sts_name).await {
         Ok(s) => {
-            let sts_name = &s.name();
+            let sts_name = &s.name_unchecked();
             // get the StatefulSet status
             if let Some(sts_status) = s.status {
                 let ready_replicas = sts_status.ready_replicas.unwrap_or(0) as u64;
@@ -254,7 +255,7 @@ pub async fn set_identity(
     let stateful_set_api: Api<StatefulSet> = Api::namespaced(kube_client.clone(), kube_namespace);
     let patch_op = PatchOperation::Replace(ReplaceOperation {
         // The json path below should match `terraform/helm/diem-node/templates/validator.yaml`.
-        path: "/spec/template/spec/volumes/1/secret/secretName".to_string(),
+        path: Pointer::parse("/spec/template/spec/volumes/1/secret/secretName")?,
         value: json!(k8s_secret_name),
     });
     let patch: Patch<Value> = Patch::Json(JsonPatch(vec![patch_op]));
