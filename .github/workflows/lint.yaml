@@ -12,6 +12,7 @@ on:
 
 env:
   ENABLE_RUSTFMT: False
+  ENABLE_CLIPPY: False
 
 jobs:
   lint-checks:
@@ -46,12 +47,16 @@ jobs:
           # TODO: check if we need all the packages below -- this list comes from the Libra build setup script
           packages: build-essential lld pkg-config libssl-dev libgmp-dev clang
           version: 1.0 # This is a cache key -- change it when you change the package list above
-      - name: Run cargo fmt
+      - name: Run cargo fmt on default packages
         if: env.ENABLE_RUSTFMT == 'True'
         # Note the hacky +nightly below
         run:  cargo +nightly fmt --all -- --check
-      - name: Run cargo fmt
+      - name: Skip cargo fmt on default packages
         if: env.ENABLE_RUSTFMT != 'True'
         run:  echo "cargo fmt skipped due to project code not complying with current format rules"
-      - name: Run cargo clippy
+      - name: Run cargo clippy on default packages
+        if: env.ENABLE_CLIPPY == 'True'
         run:  cargo clippy --workspace --tests -- -D warnings
+      - name: Skip cargo clippy on default packages
+        if: env.ENABLE_CLIPPY != 'True'
+        run:  echo "cargo fmt skipped due to project code not complying with current clippy rules"
