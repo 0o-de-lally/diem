@@ -23,7 +23,14 @@ use move_vm_types::{
     values::{Reference, Struct, Value},
 };
 use smallvec::{smallvec, SmallVec};
-use std::{collections::VecDeque, sync::Arc};
+use std::{collections::VecDeque, env, sync::Arc};
+use once_cell::sync::Lazy;
+// instead of compile time feature, we use environment variable to enable debug prints from the Move vm
+// Note: downstream libra does not use compile time features.
+const MOVE_DEBUG_ENV: Lazy<bool> = Lazy::new(|| match env::var("DIEM_MOVE_DEBUG") {
+    Ok(_) => true,
+    Err(_) => false,
+});
 
 /***************************************************************************************************
  * native fun print
@@ -39,7 +46,7 @@ fn native_print(
     debug_assert!(ty_args.is_empty());
     debug_assert!(args.len() == 1);
 
-    if cfg!(feature = "testing") {
+    if *MOVE_DEBUG_ENV {
         let val = safely_pop_arg!(args, Struct);
         let bytes = val.unpack()?.next().unwrap();
 
@@ -69,7 +76,7 @@ fn native_stack_trace(
 
     let mut s = String::new();
 
-    if cfg!(feature = "testing") {
+    if *MOVE_DEBUG_ENV{
         context.print_stack_trace(&mut s)?;
     }
 
