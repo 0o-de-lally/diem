@@ -169,7 +169,7 @@ pub fn attach_poem_to_runtime(
             // routing in the LB) we must enable this:
             // https://stackoverflow.com/a/24689738/3846032
             // .allow_credentials(true)
-            .allow_methods(vec![Method::GET, Method::POST])
+            .allow_methods(vec![Method::GET, Method::POST]);
             // .allow_headers(vec![
             //     header::HeaderName::from_static("x-aptos-client"),
             //     header::HeaderName::from_static("x-aptos-typescript-sdk-origin-method"),
