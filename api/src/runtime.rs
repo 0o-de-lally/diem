@@ -168,14 +168,14 @@ pub fn attach_poem_to_runtime(
             // To allow browsers to use cookies (for cookie-based sticky
             // routing in the LB) we must enable this:
             // https://stackoverflow.com/a/24689738/3846032
-            .allow_credentials(true)
+            // .allow_credentials(true)
             .allow_methods(vec![Method::GET, Method::POST])
-            .allow_headers(vec![
-                header::HeaderName::from_static("x-aptos-client"),
-                header::HeaderName::from_static("x-aptos-typescript-sdk-origin-method"),
-                header::CONTENT_TYPE,
-                header::ACCEPT,
-            ]);
+            // .allow_headers(vec![
+            //     header::HeaderName::from_static("x-aptos-client"),
+            //     header::HeaderName::from_static("x-aptos-typescript-sdk-origin-method"),
+            //     header::CONTENT_TYPE,
+            //     header::ACCEPT,
+            // ]);
 
         // Build routes for the API
         let route = Route::new()
