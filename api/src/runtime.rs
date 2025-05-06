@@ -171,7 +171,7 @@ pub fn attach_poem_to_runtime(
             .allow_credentials(true)
             .allow_methods(vec![Method::GET, Method::POST])
             .allow_headers(vec![
-                header::HeaderName::from_static(X_DIEM_CLIENT),
+                // header::HeaderName::from_static(X_DIEM_CLIENT),
                 header::CONTENT_TYPE,
                 header::ACCEPT,
             ]);
