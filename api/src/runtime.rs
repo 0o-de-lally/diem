@@ -172,6 +172,7 @@ pub fn attach_poem_to_runtime(
             .allow_methods(vec![Method::GET, Method::POST])
             .allow_headers(vec![
                 header::HeaderName::from_static("x-aptos-client"),
+                header::HeaderName::from_static("x-aptos-typescript-sdk-origin-method"),
                 header::CONTENT_TYPE,
                 header::ACCEPT,
             ]);
